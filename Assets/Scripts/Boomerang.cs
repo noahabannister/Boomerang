@@ -19,10 +19,8 @@ public class Boomerang: MonoBehaviour {
 	private Vector3 handleDistance;
 	private Vector3 bisector;
 	private short handleDirection = 1;
-	private Sword sword;
 
 	void Start () {
-		sword = GetComponent <Sword> ();
 
 		Destroy (GameObject.Find ("Origin"));
 		Destroy (GameObject.Find ("Target"));
@@ -48,10 +46,10 @@ public class Boomerang: MonoBehaviour {
 
 		//SWITH DIRECTION AT PERCENTDONE = 1\\
 		if (percentDone == 1f) {
-			NewTarget (target, GameObject.FindGameObjectWithTag("Player"));
+			NewTarget (target, origin);
 		}
-		if (sword.GetIsFlying)
-			RefreshPosition();
+
+		RefreshPosition();
 
 	}
 
@@ -73,10 +71,11 @@ public class Boomerang: MonoBehaviour {
 		//FIND THE POINT ALONG THE BISECTOR\\
 		Vector3 bezierPoint;
 		//find the ray from handleDistance to handle for a given percent of the cycle
-		if (handleDirection > 0){
+		if (handleDirection > 0) {
 			bisector = percentLeft*handleDistance - percentDone*handle;
 			bezierPoint = StartingOrigin.transform.position + percentDone * handleDistance + percentDone * bisector;
-		}else{
+		}
+		else {
 			bisector = percentDone*handleDistance - percentLeft*handle;
 			bezierPoint = StartingOrigin.transform.position + percentLeft * handleDistance + percentLeft * bisector;
 		}
@@ -87,6 +86,7 @@ public class Boomerang: MonoBehaviour {
 		transform.position = bezierPoint;
 	}
 
+	/// <summary> Sets a new target and origin, and reverses the handle. </summary>
 	void NewTarget (GameObject _origin,GameObject _target) {
 		//reset timer
 		startTime = Time.time;
@@ -94,24 +94,23 @@ public class Boomerang: MonoBehaviour {
 		origin = _origin;
 		//set new target
 		target = _target;
-		StartingOrigin = _target;
 		//reverse the direction of travel
 		handleDirection *= -1;
 		handle *= -1;
 
 	}
 
-	void OnDrawGizmos() {
-		if (sword.GetIsFlying){
-			Gizmos.color = Color.black;
-			Gizmos.DrawRay(StartingOrigin.transform.position, handleDistance);
-			Gizmos.DrawRay(StartingTarget.transform.position, handle);
-			
-			Gizmos.color = Color.green;
-			if (handleDirection>0)
-				Gizmos.DrawRay(StartingOrigin.transform.position + percentDone * handleDistance , bisector);
-			else
-				Gizmos.DrawRay(StartingOrigin.transform.position + (1-percentDone) * handleDistance , bisector);
-		}
-	}
+//	void OnDrawGizmos() {
+//
+//		Gizmos.color = Color.black;
+//		Gizmos.DrawRay(StartingOrigin.transform.position, handleDistance);
+//		Gizmos.DrawRay(StartingTarget.transform.position, handle);
+//		
+//		Gizmos.color = Color.green;
+//		if (handleDirection > 0)
+//			Gizmos.DrawRay(StartingOrigin.transform.position + percentDone * handleDistance , bisector);
+//		else
+//			Gizmos.DrawRay(StartingOrigin.transform.position + (1-percentDone) * handleDistance , bisector);
+//
+//	}
 }
