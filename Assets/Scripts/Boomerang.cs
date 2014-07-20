@@ -7,6 +7,8 @@ public class Boomerang: MonoBehaviour {
 	public float Range = 20f;
 	public float Rate = 10f;
 	public float RotationSpeed = 6;
+
+	public GameObject[] targetList;
 	
 	private GameObject StartingOrigin;
 	private GameObject StartingTarget;
@@ -20,21 +22,36 @@ public class Boomerang: MonoBehaviour {
 	private Vector3 bisector;
 	private short handleDirection = 1;
 
-	void Start () {
-
-		Destroy (GameObject.Find ("Origin"));
-		Destroy (GameObject.Find ("Target"));
-
+	void Awake () {
 		//make sure there is a nonkinematic rigidbody
 		if (this.rigidbody == null){
 			this.gameObject.AddComponent("Rigidbody");
 		}
 		this.rigidbody.isKinematic = false;
+		
+
+	}
+
+	void Start () {
+		Throw ();
+	}
+
+	void Throw () {
+
+		Destroy (GameObject.Find ("Origin"));
+		Destroy (GameObject.Find ("Target"));
 
 		StartingOrigin = new GameObject("Origin");
 		StartingOrigin.transform.position = transform.position;
-		StartingTarget = new GameObject("Target");
-		StartingTarget.transform.position = transform.position + Range * transform.forward;
+
+		if (targetList == null) {
+			StartingTarget = new GameObject("Target");
+			StartingTarget.transform.position = transform.position + Range * transform.forward;
+		}
+		else {
+			StartingTarget = targetList[0];
+		}
+
 
 		startTime = Time.time;
 		origin = StartingOrigin;
